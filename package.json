@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Projet 7 OpenClassrooms : Créer un réseau social d'entreprise Groupomania Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christophelbr/Groupomania-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christophelbr/Groupomania-backend/issues"
+  },
+  "homepage": "https://github.com/christophelbr/Groupomania-backend#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "nodemon": "^2.0.7"
+  }
+}
