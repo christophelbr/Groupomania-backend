@@ -3,6 +3,7 @@ const express = require('express'); // ajout du routeur express
 const helmet = require('helmet');
 const bodyParser = require('body-parser'); //ajout de body-parser au projet : permet extraction d'objet JSON
 
+
 // Importation des routes
 
 // Application express

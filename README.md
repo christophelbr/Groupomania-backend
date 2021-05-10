@@ -5,3 +5,6 @@ Serveur NodeJs dépendances :
     - nodemon
     - express
     - body-parser
+    - helmet
+    - sequelize
+    
