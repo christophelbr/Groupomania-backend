@@ -2,7 +2,29 @@
 const express = require('express'); // ajout du routeur express
 const helmet = require('helmet');
 const bodyParser = require('body-parser'); //ajout de body-parser au projet : permet extraction d'objet JSON
+const mysql = require('mysql');
+// Vous devez d'abord créer une connexion à la base de données
+// Assurez-vous de remplacer «utilisateur» et «mot de passe» par les valeurs correctes
+const con = mysql.createConnection ({
+  host: "127.0.0.1",
+  port: 8889,
+  user: 'root',
+  password: 'Azertyuiop,123'
+});
 
+con.connect ((err) => {
+  if (err) {
+    console.log ('Erreur de connexion à Db');
+    return;
+  }
+  console.log ('Connexion établie');
+});
+
+con.end ((err) => {
+  // La connexion se termine normalement
+  // Garantit que toutes les requêtes restantes sont exécutées
+  // Envoie ensuite un paquet
+});
 
 // Importation des routes
 
