@@ -1,15 +1,18 @@
 // Importation des modules
-const express = require('express'); // ajout du routeur express
+const express = require('express'); 
 const helmet = require('helmet');
-const bodyParser = require('body-parser'); //ajout de body-parser au projet : permet extraction d'objet JSON
 const mysql = require('mysql');
-// Vous devez d'abord créer une connexion à la base de données
-// Assurez-vous de remplacer «utilisateur» et «mot de passe» par les valeurs correctes
+const bodyParser = require('body-parser');
+
+// Importation des routes
+const userRoute = require('./routes/user.route.js');
+
+// connexion à la base de données
 const con = mysql.createConnection ({
   host: "127.0.0.1",
   port: 8889,
   user: 'root',
-  password: 'Azertyuiop,123'
+  password: 'Azertyuiop,123',
 });
 
 con.connect ((err) => {
@@ -17,7 +20,7 @@ con.connect ((err) => {
     console.log ('Erreur de connexion à Db');
     return;
   }
-  console.log ('Connexion établie');
+  console.log ('Connexion bdd établie !');
 });
 
 con.end ((err) => {
@@ -40,9 +43,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// Body Parser configuration
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+
 // Protection de l'application avec helmet
 app.use(helmet());
 
 // Routes
+app.use('/api/auth', userRoute);
 
 module.exports = app;

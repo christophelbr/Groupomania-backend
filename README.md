@@ -7,4 +7,9 @@ Serveur NodeJs dépendances :
     - body-parser
     - helmet
     - sequelize
+    - seqelize/cli
+    - jsonwebtoken
+    - bcrypt
+    - body-parser
+
     
