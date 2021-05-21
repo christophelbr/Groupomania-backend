@@ -11,5 +11,6 @@ Serveur NodeJs dépendances :
     - jsonwebtoken
     - bcrypt
     - body-parser
+    - multer
 
     

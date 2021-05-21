@@ -2,9 +2,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../models');
-const User = require('../models/user.js');
+const User = require('../models/user.model.js');
 const token = require("../middleware/token");
-const sequelize = require('sequelize');
+const fs = require('fs');
 
 // Constantes
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -17,7 +17,6 @@ exports.register = async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const bio = req.body.bio;
-    console.log(username.length);
 
     if (!email || !username || !password) {
         return res.status(400).json({ 'error': 'champs manquants' });
@@ -48,11 +47,10 @@ exports.register = async (req, res) => {
             email: req.body.email,
             username: req.body.username,
             password: hash,
-            bio: req.body.bio,
             isAdmin: false,
         });
 
-        const tokenObject = await token.issueJWT(newUser);
+        const tokenObject = token.issueJWT(newUser);
         res.status(201).send({
             user: newUser,
             token: tokenObject.token,
@@ -68,14 +66,12 @@ exports.login = async (req, res) => {
     const user = await db.User.findOne({
         where: { email: req.body.email },
     }); // on vérifie que l'adresse mail figure bien dan la bdd
-    if (user === null) {
-        return res.status(403).send({ error: "Email inconnu" });
-    } else {
+    if (user) {
         const hash = await bcrypt.compare(req.body.password, user.password); // on compare les mots de passes
         if (!hash) {
             return res.status(401).send({ error: "Mot de passe incorrect !" });
         } else {
-            const tokenObject = await token.issueJWT(user);
+            const tokenObject = token.issueJWT(user);
             res.status(200).send({
                 // on renvoie le user et le token
                 user: user,
@@ -85,46 +81,80 @@ exports.login = async (req, res) => {
                 message: "Bonjour " + user.username + " !",
             });
         }
+    } else {
+        return res.status(403).send({ error: "Email inconnu" });
     }
 }
 
 // Récupération d'un profil 
 exports.getProfile = async (req, res) => {
+    const userId = token.getUserId(req);
 
-    try {
-        const user = await db.User.findOne({
-            attributes: ['id', 'email', 'username', 'bio'],
-            where: { id: req.params.id }
-        });
+    const user = await db.User.findOne({
+        attributes: ['id', 'email', 'username', 'photo', 'bio'],
+        where: { id: userId }
+    });
+    if (user) {
         res.status(200).send(user);
-    } catch (error) {
-        return res.status(500).send({ error: "Erreur serveur" });
+    } else {
+        res.status(500).send({ error: "Erreur serveur" });
     }
 }
 
+//Modification d'un compte 
 exports.updateProfile = async (req, res) => {
-    // 
-    // modifier le profil
-  const id = req.params.id;
-  try {
-    const userId = token.getUserId(req);
-    let user = await db.User.findOne({ where: { id: id } }); // on trouve le user
-    if (userId === user.id) {
-      if (req.body.bio) {
-        user.bio = req.body.bio;
-      }
 
-      const newUser = await user.save({ fields: ["bio"] }); // on sauvegarde les changements dans la bdd
-      res.status(200).json({
-        user: newUser,
-        messageRetour: "Votre profil a bien été modifié",
-      });
+        const userId = token.getUserId(req);
+        console.log(req, res);
+        let newPhoto;
+        const user = await db.User.findOne({ where: { id: userId } }); // on trouve le user
+
+        if (userId === user.id) {
+            // Modification de la photo
+            if (req.file && user.photo) {
+                newPhoto = `${req.protocol}://${req.get("host")}/upload/${req.file.filename}`;
+                const filename = user.photo.split("/upload")[1];
+                fs.unlink(`upload/${filename}`, (err) => {
+                    // s'il y a déjà une photo on la supprime
+                    if (err) console.log(err);
+                    else {
+                        console.log(`Deleted file: upload/${filename}`);
+                    }
+                });
+            } else if (req.file) {
+                newPhoto = `${req.protocol}://${req.get("host")}/upload/${req.file.filename}`;
+            }
+            if (newPhoto) {
+                user.photo = newPhoto;
+            }
+
+            // Modification de la descritpion
+            if (req.body.bio) {
+                user.bio = req.body.bio;
+            }
+
+            // Sauvegarde des changements dans la bdd
+            const newUser = await user.save({ fields: ["bio", "photo"] });
+            res.status(200).json({
+                user: newUser,
+                message: "Votre profil a bien été modifié",
+            });
+        } else {
+            res.status(400).json({ message: "Erreur serveur" });
+        }
+};
+
+// Suppression d'un compte
+exports.deleteProfile = async (req, res) => {
+    const userId = token.getUserId(req);
+
+    const user = await db.User.findOne({
+        where: { id: userId },
+    });
+    if (user) {
+        db.User.destroy({ where: { id: userId } }); // on supprime le compte
+        res.status(200).json({ "message": "utilisateur supprimé" });
     } else {
-      res
-        .status(400)
-        .json({ messageRetour: "Vous n'avez pas les droits requis" });
+        res.status(400).json({ error: "Erreur serveur" })
     }
-  } catch (error) {
-    return res.status(500).send({ error: "Erreur serveur" });
-  }
 };

@@ -6,6 +6,10 @@ const bodyParser = require('body-parser');
 
 // Importation des routes
 const userRoute = require('./routes/user.route.js');
+const postRoute = require('./routes/post.route.js');
+const likeRoute = require('./routes/like.route.js');
+const commentRoute = require('./routes/comments.route');
+const commentsRoute = require('./routes/comments.route');
 
 // connexion à la base de données
 const con = mysql.createConnection ({
@@ -29,8 +33,6 @@ con.end ((err) => {
   // Envoie ensuite un paquet
 });
 
-// Importation des routes
-
 // Application express
 const app = express();
 
@@ -53,5 +55,9 @@ app.use(helmet());
 
 // Routes
 app.use('/api/auth', userRoute);
+app.use('/api/wall', postRoute);
+app.use('/api/wall', likeRoute);
+app.use('/api/wall', commentsRoute);
+
 
 module.exports = app;
