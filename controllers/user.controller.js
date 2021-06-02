@@ -62,7 +62,7 @@ exports.register = async (req, res) => {
 
 // Connexion d'un utilisateur
 exports.login = async (req, res) => {
-
+    console.log(req.body);
     const user = await db.User.findOne({
         where: { email: req.body.email },
     }); // on vérifie que l'adresse mail figure bien dan la bdd
