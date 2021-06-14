@@ -25,8 +25,8 @@ exports.createPost = async (req, res) => {
         where: { id: userId}
     });
 
-    const username = userFound.username;
-    const photo = userFound.photo;
+/*     const username = userFound.username;
+    const photo = userFound.photo; */
 
 
     if (userFound) {
@@ -35,6 +35,8 @@ exports.createPost = async (req, res) => {
           } else {
             attachment = null;
           }
+        const username = userFound.username;
+        const photo = userFound.photo;
         const newPost = await db.Post.create({
             username: username,
             photo: photo,

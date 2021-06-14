@@ -2,6 +2,7 @@
 const express = require('express'); 
 const helmet = require('helmet');
 const mysql = require('mysql');
+const path = require('path'); // Gestion du système de fichiers
 const bodyParser = require('body-parser');
 
 // Importation des routes
@@ -49,6 +50,8 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Définition du chemin pour enregistremnet des photos sur le backend
+app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
 // Protection de l'application avec helmet
 app.use(helmet());

@@ -22,4 +22,4 @@ const storage = multer.diskStorage({
 });
 
 //Exportation de multer
-module.exports = multer({storage: storage}).single('upload');
+module.exports = multer({storage: storage}).single('image');
