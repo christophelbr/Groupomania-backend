@@ -1,5 +1,6 @@
 const db = require('../models');
-const token = require('../middleware/token')
+const token = require('../middleware/token');
+const { post } = require('../app');
 
 
 // Ajout d'un commentaire
@@ -27,6 +28,26 @@ exports.createComment = async (req, res) => {
         });
     } else {
         return res.status(404).json({ 'error': 'Utilisateur introuvable' });
+    }
+
+};
+
+exports.getComments = async (req, res) => {
+
+    const userId = token.getUserId(req);
+    const postId = req.params.postId
+    const userFound = await db.User.findOne({
+        where: { id: userId }
+    });
+
+    if (userFound) {
+        console.log(req.params.postId)
+        const comments = await db.Comments.findAll({            
+            where: { postId: postId }
+        })
+            res.status(200).send(comments);
+        }  else {
+        res.status(500).json({ "error": "erreur serveur" });
     }
 
 };

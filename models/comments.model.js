@@ -34,23 +34,23 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
-     userId: {
+    userId: {
       type: DataTypes.INTEGER,
       references: {
         model: 'User',
         key: 'id'
       }
-    }, 
+    },
     username: {
       type: DataTypes.STRING,
-       references: {
+      references: {
         model: 'user',
         key: 'username'
-      } 
+      }
     },
     comment: {
       type: DataTypes.STRING,
-      
+
     }
   }, {
     sequelize,

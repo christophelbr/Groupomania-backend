@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 const userRoute = require('./routes/user.route.js');
 const postRoute = require('./routes/post.route.js');
 const likeRoute = require('./routes/like.route.js');
-const commentRoute = require('./routes/comments.route');
 const commentsRoute = require('./routes/comments.route');
 
 // connexion à la base de données
@@ -52,6 +51,7 @@ app.use(bodyParser.json());
 
 // Définition du chemin pour enregistremnet des photos sur le backend
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
+
 
 // Protection de l'application avec helmet
 app.use(helmet());

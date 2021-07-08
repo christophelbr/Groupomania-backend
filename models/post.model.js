@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Post extends Model {
     /**
@@ -15,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: {
           allowNull: false
         }, onDelete: 'CASCADE',
-      })
+      }),
+      models.Post.hasMany(models.Comments);
     }
   };
   Post.init({
@@ -31,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.STRING,
     attachment: DataTypes.STRING,
     likes: DataTypes.INTEGER,
+    
   }, {
     sequelize,
     modelName: 'Post',

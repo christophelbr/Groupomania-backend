@@ -105,13 +105,14 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
 
         const userId = token.getUserId(req);
-        console.log(req, res);
+        //console.log(req, res);
         let newPhoto;
         const user = await db.User.findOne({ where: { id: userId } }); // on trouve le user
 
         if (userId === user.id) {
             // Modification de la photo
             if (req.file && user.photo) {
+                console.log(req.file)
                 newPhoto = `${req.protocol}://${req.get("host")}/upload/${req.file.filename}`;
                 const filename = user.photo.split("/upload")[1];
                 fs.unlink(`upload/${filename}`, (err) => {

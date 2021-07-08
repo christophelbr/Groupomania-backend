@@ -1,42 +1,52 @@
 const db = require('../models');
-const token = require('../middleware/token')
+const token = require('../middleware/token');
+const { post } = require('../app');
+const { request } = require('express');
 
 // Constantes
 const TITLE_LIMIT = 2;
 const CONTENT_LIMIT = 4;
 
 exports.createPost = async (req, res) => {
-
     // Params
     const title = req.body.title;
     const content = req.body.content;
-
+    //const file = req.body.attachment;
+    let attachment = req.file;
+    console.log("toto", req.body, req.file);
     const userId = token.getUserId(req);
 
-    if (!title || !content) {
+    if (!title && !content && !attachment) {
         return res.status(400).json({ 'error': 'Champs manquants' });
     }
 
-    if (title.length <= TITLE_LIMIT || content.length <= 4) {
+    /* if (title.length <= TITLE_LIMIT || content.length <= 4) {
         return res.status(400).json({ 'error': 'Paramètres invalides' });
-    }
+    } */
 
     const userFound = await db.User.findOne({
-        where: { id: userId}
+        where: { id: userId }
     });
 
-/*     const username = userFound.username;
-    const photo = userFound.photo; */
+    const username = userFound.username;
+    const photo = userFound.photo;
 
 
-    if (userFound) {
+    if (userFound !== null) {
+        //console.log(req.file)
+
         if (req.file) {
             attachment = `${req.protocol}://${req.get("host")}/upload/${req.file.filename}`;
-          } else {
+            //const filename = post.attachment.split("/upload")[1];
+
+        } else {
             attachment = null;
-          }
+        }
+
+
         const username = userFound.username;
         const photo = userFound.photo;
+        //console.log(attachment);
         const newPost = await db.Post.create({
             username: username,
             photo: photo,
@@ -46,13 +56,18 @@ exports.createPost = async (req, res) => {
             UserId: userId,
             likes: 0,
         });
+
         res.status(200).json({
             post: newPost,
             mesageRetour: 'Votre post a bien été publié'
-        });
-    } else {
-        return res.status(404).json({ 'error': 'Utilisateur introuvable' });
+        })
     }
+    else {
+        res.status(400).json({ message: "Erreur serveur" });
+    }
+    /* else {
+       return res.status(404).json({ 'error': 'Utilisateur introuvable' });
+   } */
 
 }
 
@@ -68,11 +83,13 @@ exports.getAllPosts = async (req, res) => {
     const userFound = await db.User.findOne({
         where: { id: userId }
     });
-    console.log(userId);
+
+    
 
     if (userFound) {
-        console.log('toto');
-
+        /* const postId = await db.comments.findOne({
+            where: { postId: post.id}
+        }) */
         const posts = await db.Post.findAll({
             order: [(order != null) ? order.split(':') : ['createdAt', 'DESC']],
             attributes: (fields !== '*' && fields != null) ? fields.split(',') : null,
@@ -81,7 +98,11 @@ exports.getAllPosts = async (req, res) => {
             include: [{
                 model: db.User,
                 attributes: ['username']
-            }]
+            }],
+            include: [{
+                model: db.Comments,
+                attributes: ['postId']
+            }],
         })
 
         if (posts) {
