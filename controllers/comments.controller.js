@@ -51,3 +51,19 @@ exports.getComments = async (req, res) => {
     }
 
 };
+
+exports.deleteComments = async (req, res) => {
+
+    const userId = token.getUserId(req);
+    const admin = await db.User.findOne({ where: { id: userId } });
+    console.log("admin", admin.isAdmin);
+    const comment = await db.Comments.findOne({ where: { id: req.params.id } });
+    console.log("COMMENT", comment.dataValues.userId)
+    if (userId === comment.dataValues.userId || admin.isAdmin === true) {
+        db.Comments.destroy({ where: { id: comment.id } });
+        res.status(200).json({ message: "Commentaire supprimé" });
+    } else {
+        res.status(400).json({ message: "Vous n'avez pas les droits requis" });
+    }
+
+};
