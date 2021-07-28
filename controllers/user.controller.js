@@ -112,18 +112,19 @@ exports.updateProfile = async (req, res) => {
         if (userId === user.id) {
             // Modification de la photo
             if (req.file && user.photo) {
-                console.log(req.file)
+                //console.log(req.file)
                 newPhoto = `${req.protocol}://${req.get("host")}/upload/${req.file.filename}`;
                 const filename = user.photo.split("/upload")[1];
                 fs.unlink(`upload/${filename}`, (err) => {
                     // s'il y a déjà une photo on la supprime
                     if (err) console.log(err);
-                    else {
+                    /* else {
                         console.log(`Deleted file: upload/${filename}`);
-                    }
+                    } */
                 });
             } else if (req.file) {
                 newPhoto = `${req.protocol}://${req.get("host")}/upload/${req.file.filename}`;
+                //console.log("newphoto", newPhoto)
             }
             if (newPhoto) {
                 user.photo = newPhoto;
