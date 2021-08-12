@@ -70,9 +70,7 @@ exports.getAllPosts = async (req, res) => {
             offset: (!isNaN(offset)) ? offset : null,
             include: [{
                 model: db.User,
-                attributes: ['username']
-            }],
-            include: [{
+            }, {
                 model: db.Comments,
                 attributes: ['postId']
             }],
@@ -91,9 +89,7 @@ exports.getAllPosts = async (req, res) => {
 exports.deletePost = async (req, res) => {
     const userId = token.getUserId(req);
     const admin = await db.User.findOne({ where: { id: userId } });
-    console.log("admin", admin.isAdmin);
     const post = await db.Post.findOne({ where: { id: req.params.id } });
-    console.log("POST", post.dataValues.UserId)
     if (userId === post.dataValues.UserId || admin.isAdmin === true) {
         db.Post.destroy({ where: { id: post.id } });
         res.status(200).json({ message: "Post supprimé" });

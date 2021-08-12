@@ -19,7 +19,7 @@ exports.createComment = async (req, res) => {
             postId: postId,
             userId: userId,
             comment: comment,
-            username: username
+            username: username,
         });
         res.status(200).json({
             comment: newComment,

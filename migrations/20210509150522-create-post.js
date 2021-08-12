@@ -19,14 +19,6 @@ module.exports = {
         }
 
       },
-      username: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      photo: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
       title: {
         allowNull: true,
         type: Sequelize.STRING
