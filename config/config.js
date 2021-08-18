@@ -21,8 +21,9 @@ module.exports = {
     production: {
       username: "be8e048047dfe7",
       password: "a9a997ad",
-      database: "heroku_3239194d9239bd6",
+      database: "groupomania_production",
       host: "us-cdbr-east-04.cleardb.com",
+      port: 5000,
       dialect: "mysql"
     }
 
