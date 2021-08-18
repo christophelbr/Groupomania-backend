@@ -19,11 +19,10 @@ module.exports = {
       dialect: "mysql"
     },
     production: {
-      username: "root",
-      password: "Azertyuiop,123",
-      database: "groupomania_production",
-      host: "127.0.0.1",
-      port: 8889,
+      username: "be8e048047dfe7",
+      password: "a9a997ad",
+      database: "heroku_3239194d9239bd6",
+      host: "us-cdbr-east-04.cleardb.com",
       dialect: "mysql"
     }
 
